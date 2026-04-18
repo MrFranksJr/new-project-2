@@ -22,8 +22,8 @@ fun Application.configureRouting(
     getUpdateStatusUseCase: GetUpdateStatusUseCase
 ) {
     routing {
-        // Serve static files from frontend/dist
-        staticFiles("/", File("frontend/dist")) {
+        // Serve static files from resources
+        staticResources("/", "static") {
             default("index.html")
         }
 

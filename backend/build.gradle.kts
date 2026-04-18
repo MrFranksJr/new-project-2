@@ -63,6 +63,24 @@ tasks.test {
     useJUnitPlatform()
 }
 
+val buildFrontend = tasks.register<Exec>("buildFrontend") {
+    group = "build"
+    workingDir = File(project.rootDir, "frontend")
+    if (System.getProperty("os.name").lowercase().contains("windows")) {
+        commandLine("cmd", "/c", "npm install && npm run build")
+    } else {
+        commandLine("bash", "-c", "npm install && npm run build")
+    }
+}
+
+// Ensure frontend is built before resources are processed
+tasks.processResources {
+    dependsOn(buildFrontend)
+    from(File(project.rootDir, "frontend/dist")) {
+        into("static")
+    }
+}
+
 compose.desktop {
     application {
         mainClass = "com.gaminggaiden.rebirth.MainKt"
@@ -71,6 +89,16 @@ compose.desktop {
             targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Exe)
             packageName = "GamingGaidenRebirth"
             packageVersion = "1.0.0"
+            description = "Gaming Gaiden Rebirth - Modernized Gaming Session Tracker"
+            copyright = "© 2026 Gaming Gaiden"
+            vendor = "Gaming Gaiden"
+            
+            windows {
+                menuGroup = "Games"
+                shortcut = true
+                dirChooser = true
+                upgradeUuid = "d7d1e8c0-8a4b-4b2a-8c9e-6b7d8c9d0e1f"
+            }
         }
     }
 }

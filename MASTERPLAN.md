@@ -26,10 +26,10 @@
 - [x] 3.5. Implement Add Game UI and Update Notifications
 
 ## Phase 4: Packaging & Distribution ✓
-- [ ] 4.1. Configure jpackage / Compose Gradle Plugin for MSI/EXE
+- [x] 4.1. Configure jpackage / Compose Gradle Plugin for MSI/EXE
 - [x] 4.2. Implement Auto-Update Check Logic
 
 ## Phase 5: Testing & Verification ✓
 - [x] 5.1. 100% Coverage for Core Tracking Logic (Unit Tests)
 - [x] 5.2. Integration Tests for Persistence and Migrations
-- [ ] 5.3. E2E Validation of Full User Journey
+- [x] 5.3. E2E Validation of Full User Journey
