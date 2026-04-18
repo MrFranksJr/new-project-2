@@ -10,19 +10,19 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class SqliteGameRepository : GameRepository {
     override fun findByName(name: String): Game? = transaction {
-        GamesTable.select { GamesTable.name eq name }
+        GamesTable.selectAll().where { GamesTable.name eq name }
             .map { toDomain(it) }
             .singleOrNull()
     }
 
     override fun findByExeName(exeName: String): Game? = transaction {
-        GamesTable.select { GamesTable.exeName eq exeName }
+        GamesTable.selectAll().where { GamesTable.exeName eq exeName }
             .map { toDomain(it) }
             .singleOrNull()
     }
 
     override fun save(game: Game) = transaction {
-        val exists = GamesTable.select { GamesTable.name eq game.name }.any()
+        val exists = GamesTable.selectAll().where { GamesTable.name eq game.name }.any()
         if (exists) {
             GamesTable.update({ GamesTable.name eq game.name }) {
                 it[exeName] = game.exeName
@@ -46,7 +46,7 @@ class SqliteGameRepository : GameRepository {
         GameGamingPCsTable.deleteWhere { GameGamingPCsTable.gameName eq game.name }
         game.gamingPcs.forEach { pc ->
             // Ensure PC exists
-            if (!GamingPCsTable.select { GamingPCsTable.name eq pc.name }.any()) {
+            if (!GamingPCsTable.selectAll().where { GamingPCsTable.name eq pc.name }.any()) {
                 GamingPCsTable.insert {
                     it[name] = pc.name
                     it[totalPlaytimeMinutes] = pc.totalPlaytimeMinutes
@@ -68,7 +68,7 @@ class SqliteGameRepository : GameRepository {
         val name = row[GamesTable.name]
         val pcs = GameGamingPCsTable
             .join(GamingPCsTable, JoinType.INNER, additionalConstraint = { GameGamingPCsTable.pcName eq GamingPCsTable.name })
-            .select { GameGamingPCsTable.gameName eq name }
+            .selectAll().where { GameGamingPCsTable.gameName eq name }
             .map {
                 GamingPC(
                     name = it[GamingPCsTable.name],

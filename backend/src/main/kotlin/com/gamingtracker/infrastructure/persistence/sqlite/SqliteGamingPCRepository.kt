@@ -7,13 +7,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class SqliteGamingPCRepository : GamingPCRepository {
     override fun findInUse(): GamingPC? = transaction {
-        GamingPCsTable.select { GamingPCsTable.inUse eq true }
+        GamingPCsTable.selectAll().where { GamingPCsTable.inUse eq true }
             .map { toDomain(it) }
             .singleOrNull()
     }
 
     override fun save(pc: GamingPC): Unit = transaction {
-        val exists = GamingPCsTable.select { GamingPCsTable.name eq pc.name }.any()
+        val exists = GamingPCsTable.selectAll().where { GamingPCsTable.name eq pc.name }.any()
         if (exists) {
             GamingPCsTable.update({ GamingPCsTable.name eq pc.name }) {
                 it[totalPlaytimeMinutes] = pc.totalPlaytimeMinutes
@@ -33,7 +33,6 @@ class SqliteGamingPCRepository : GamingPCRepository {
                 it[inUse] = false
             }
         }
-        Unit
     }
 
     private fun toDomain(row: ResultRow): GamingPC {

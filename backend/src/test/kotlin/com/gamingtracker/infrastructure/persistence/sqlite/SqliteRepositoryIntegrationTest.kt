@@ -111,7 +111,7 @@ class SqliteRepositoryIntegrationTest {
         
         // Verify pc1 is no longer in use
         transaction {
-            val pc1InDb = GamingPCsTable.select { GamingPCsTable.name eq "SteamDeck" }.single()
+            val pc1InDb = GamingPCsTable.selectAll().where { GamingPCsTable.name eq "SteamDeck" }.single()
             assertFalse(pc1InDb[GamingPCsTable.inUse])
         }
     }
