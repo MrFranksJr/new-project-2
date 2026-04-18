@@ -1,14 +1,15 @@
 package com.gaminggaiden.rebirth.infrastructure.api.ktor
 
+import com.gaminggaiden.rebirth.application.ports.input.AddGameUseCase
 import com.gaminggaiden.rebirth.application.ports.input.GetGamesUseCase
 import com.gaminggaiden.rebirth.application.ports.input.GetSummaryUseCase
+import com.gaminggaiden.rebirth.application.ports.input.GetUpdateStatusUseCase
 import com.gaminggaiden.rebirth.application.ports.input.MigrateLegacyDataUseCase
-import com.gaminggaiden.rebirth.infrastructure.api.ktor.dtos.GameDTO
-import com.gaminggaiden.rebirth.infrastructure.api.ktor.dtos.GamesResponse
-import com.gaminggaiden.rebirth.infrastructure.api.ktor.dtos.SummaryDTO
+import com.gaminggaiden.rebirth.infrastructure.api.ktor.dtos.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.io.File
@@ -16,7 +17,9 @@ import java.io.File
 fun Application.configureRouting(
     getGamesUseCase: GetGamesUseCase,
     getSummaryUseCase: GetSummaryUseCase,
-    migrateLegacyDataUseCase: MigrateLegacyDataUseCase
+    migrateLegacyDataUseCase: MigrateLegacyDataUseCase,
+    addGameUseCase: AddGameUseCase,
+    getUpdateStatusUseCase: GetUpdateStatusUseCase
 ) {
     routing {
         // Serve static files from frontend/dist
@@ -39,6 +42,19 @@ fun Application.configureRouting(
                 }
                 call.respond(GamesResponse(dtos))
             }
+
+            post("/games") {
+                val request = call.receive<AddGameRequest>()
+                val game = addGameUseCase.execute(request.name, request.exeName)
+                call.respond(HttpStatusCode.Created, GameDTO(
+                    name = game.name,
+                    exeName = game.exeName,
+                    playtimeMinutes = game.playtimeMinutes,
+                    sessionCount = game.sessionCount,
+                    lastPlayDate = game.lastPlayDate?.toString(),
+                    status = game.status.name
+                ))
+            }
             
             get("/summary") {
                 val summary = getSummaryUseCase.execute()
@@ -55,6 +71,16 @@ fun Application.configureRouting(
                 // Assuming legacy database is in the same directory for simplicity
                 migrateLegacyDataUseCase.execute("GamingGaiden.db")
                 call.respond(HttpStatusCode.OK, mapOf("status" to "success"))
+            }
+
+            get("/update-check") {
+                val status = getUpdateStatusUseCase.execute()
+                call.respond(UpdateStatusDTO(
+                    hasUpdate = status.hasUpdate,
+                    latestVersion = status.latestVersion,
+                    currentVersion = status.currentVersion,
+                    downloadUrl = status.downloadUrl
+                ))
             }
         }
     }

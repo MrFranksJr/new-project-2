@@ -16,9 +16,20 @@ data class GameDTO(
 data class GamesResponse(val games: List<GameDTO>)
 
 @Serializable
+data class AddGameRequest(val name: String, val exeName: String)
+
+@Serializable
 data class SummaryDTO(
     val totalPlaytimeMinutes: Long,
     val activeGameName: String?,
     val gamingPCName: String?,
     val systemStats: Map<String, String>
+)
+
+@Serializable
+data class UpdateStatusDTO(
+    val hasUpdate: Boolean,
+    val latestVersion: String,
+    val currentVersion: String,
+    val downloadUrl: String?
 )

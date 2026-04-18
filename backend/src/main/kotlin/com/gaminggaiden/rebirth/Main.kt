@@ -6,12 +6,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.gaminggaiden.rebirth.application.ports.output.ProcessMonitor
 import com.gaminggaiden.rebirth.application.services.TrackingService
-import com.gaminggaiden.rebirth.application.usecases.GetGames
-import com.gaminggaiden.rebirth.application.usecases.GetSummary
-import com.gaminggaiden.rebirth.application.usecases.MigrateLegacyData
-import com.gaminggaiden.rebirth.application.usecases.TrackGameSession
+import com.gaminggaiden.rebirth.application.usecases.*
 import com.gaminggaiden.rebirth.infrastructure.api.ktor.startKtorServer
 import com.gaminggaiden.rebirth.infrastructure.persistence.sqlite.*
+import com.gaminggaiden.rebirth.infrastructure.system.StaticVersionProvider
 import com.gaminggaiden.rebirth.infrastructure.system.windows.WindowsProcessMonitor
 import com.gaminggaiden.rebirth.infrastructure.system.windows.WindowsRegistryStatsProvider
 import com.multiplatform.webview.web.WebView
@@ -48,6 +46,11 @@ fun main() {
     val getSummaryUseCase = GetSummary(gameRepository, pcRepository, statsProvider)
     val trackGameSessionUseCase = TrackGameSession(gameRepository, sessionRepository, pcRepository)
     val migrateLegacyDataUseCase = MigrateLegacyData(gameRepository, sessionRepository, legacyDatabaseAdapter)
+    val addGameUseCase = AddGame(gameRepository)
+    val getUpdateStatusUseCase = CheckForUpdates(
+        versionProvider = StaticVersionProvider(latestVersion = "1.0.1"),
+        currentVersion = "1.0.0"
+    )
     
     val trackingService = TrackingService(
         gameRepository, 
@@ -62,6 +65,8 @@ fun main() {
         getGamesUseCase = getGamesUseCase,
         getSummaryUseCase = getSummaryUseCase,
         migrateLegacyDataUseCase = migrateLegacyDataUseCase,
+        addGameUseCase = addGameUseCase,
+        getUpdateStatusUseCase = getUpdateStatusUseCase,
         port = 8080,
         wait = false
     )

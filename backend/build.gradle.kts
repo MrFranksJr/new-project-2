@@ -8,6 +8,8 @@ plugins {
 group = "com.gaminggaiden"
 version = "1.0-SNAPSHOT"
 
+val ktorVersion = "3.0.0"
+
 dependencies {
     // Compose for Desktop
     implementation(compose.desktop.currentOs)
@@ -23,7 +25,6 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.45.3.0")
 
     // Ktor for Local API
-    val ktorVersion = "2.3.11"
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
@@ -46,6 +47,16 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.26.0")
     testImplementation("com.h2database:h2:2.2.224")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-core:$ktorVersion")
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.ktor") {
+            useVersion(ktorVersion)
+        }
+    }
 }
 
 tasks.test {

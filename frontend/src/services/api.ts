@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Game, GamesResponse, Summary } from '../types';
+import type { Game, GamesResponse, Summary, UpdateStatus } from '../types';
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
@@ -11,8 +11,18 @@ export const gameService = {
     return response.data.games;
   },
 
+  addGame: async (name: string, exeName: string): Promise<Game> => {
+    const response = await api.post<Game>('/games', { name, exeName });
+    return response.data;
+  },
+
   getSummary: async (): Promise<Summary> => {
     const response = await api.get<Summary>('/summary');
+    return response.data;
+  },
+
+  checkUpdates: async (): Promise<UpdateStatus> => {
+    const response = await api.get<UpdateStatus>('/update-check');
     return response.data;
   },
 };

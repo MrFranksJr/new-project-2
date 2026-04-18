@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { gameService } from './services/api';
 import SummaryCard from './components/SummaryCard';
 import GameList from './components/GameList';
+import AddGameForm from './components/AddGameForm';
 import './App.css';
 
 function App() {
@@ -16,19 +17,35 @@ function App() {
     queryFn: gameService.getGames,
   });
 
+  const { data: updateStatus } = useQuery({
+    queryKey: ['updateCheck'],
+    queryFn: gameService.checkUpdates,
+    refetchInterval: 3600000, // 1 hour
+  });
+
   return (
     <div className="app-container">
+      {updateStatus?.hasUpdate && (
+        <div className="update-banner">
+          A new version ({updateStatus.latestVersion}) is available! 
+          <a href={updateStatus.downloadUrl || '#'} target="_blank" rel="noreferrer"> Download now</a>
+        </div>
+      )}
+      
       <header>
         <h1>Gaming Tracker</h1>
       </header>
       
       <main>
         <SummaryCard summary={summary} isLoading={isSummaryLoading} />
-        <GameList games={games} isLoading={isGamesLoading} />
+        <div className="main-content">
+          <GameList games={games} isLoading={isGamesLoading} />
+          <AddGameForm />
+        </div>
       </main>
       
       <footer>
-        <p>Gaming Gaiden Rebirth &copy; 2026</p>
+        <p>Gaming Gaiden Rebirth &copy; 2026 | Current Version: {updateStatus?.currentVersion || '1.0.0'}</p>
       </footer>
     </div>
   );
