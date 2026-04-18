@@ -62,3 +62,4 @@
 - [x] 10.2. Migrate frontend build to Gradle Node plugin for environment portability
 - [x] 10.3. Synchronize IDE Kotlin compiler version with Gradle (2.3.20)
 - [x] 10.4. Cleanup temporary diagnostic files (compile_errors.txt, deps_compile.txt)
+- [x] 10.5. Fix SQLite JDBC driver class name and prevent legacy database from overriding default connection

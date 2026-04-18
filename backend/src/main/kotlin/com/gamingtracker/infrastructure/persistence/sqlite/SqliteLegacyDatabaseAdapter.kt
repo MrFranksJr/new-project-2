@@ -11,7 +11,7 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class SqliteLegacyDatabaseAdapter(private val database: Database) : LegacyDatabasePort {
 
-    constructor(dbPath: String) : this(Database.connect("jdbc:sqlite:$dbPath", driver = "org.xerial.sqlite.JDBC"))
+    constructor(dbPath: String) : this(Database.connect("jdbc:sqlite:$dbPath", driver = "org.sqlite.JDBC"))
 
     object LegacyGamesTable : Table("games") {
         val name = varchar("name", 255)

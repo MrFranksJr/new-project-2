@@ -29,12 +29,13 @@ import androidx.compose.ui.window.Tray
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.transactions.TransactionManager
 import java.io.File
 
 fun main() {
     // 1. Initialize Database
     println("Initializing Database...")
-    Database.connect("jdbc:sqlite:gaming-tracker.db")
+    val mainDb = Database.connect("jdbc:sqlite:gaming-tracker.db", driver = "org.sqlite.JDBC")
     transaction {
         SchemaUtils.create(GamesTable, GamingSessionsTable, GamingPCsTable, GameGamingPCsTable)
     }
@@ -82,8 +83,9 @@ fun main() {
         autostartPort.setEnabled(true)
     }
 
-    // Legacy database will be connected within the use case when needed
+    // 3. Initialize Legacy Adapter (restoring mainDb as default to avoid hijacking)
     val legacyDatabaseAdapter = SqliteLegacyDatabaseAdapter("GamingGaiden.db")
+    TransactionManager.defaultDatabase = mainDb
 
     // 3. Initialize Use Cases
     val getGamesUseCase = GetGames(gameRepository)
