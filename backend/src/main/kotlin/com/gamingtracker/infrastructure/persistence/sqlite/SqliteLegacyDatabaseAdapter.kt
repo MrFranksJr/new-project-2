@@ -4,9 +4,10 @@ import com.gamingtracker.application.ports.output.LegacyDatabasePort
 import com.gamingtracker.domain.Game
 import com.gamingtracker.domain.GameStatus
 import com.gamingtracker.domain.GamingSession
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.javatime.timestamp
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.javatime.timestamp
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class SqliteLegacyDatabaseAdapter(private val database: Database) : LegacyDatabasePort {
 

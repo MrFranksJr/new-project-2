@@ -1,7 +1,7 @@
 package com.gamingtracker.infrastructure.persistence.sqlite
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.javatime.timestamp
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.javatime.timestamp
 
 object GamesTable : Table("games") {
     val name = varchar("name", 255)

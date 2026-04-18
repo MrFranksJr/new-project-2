@@ -4,6 +4,7 @@ plugins {
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlinx.kover") version "0.8.3"
+    id("com.github.node-gradle.node") version "7.1.0"
 }
 
 group = "com.gamingtracker"
@@ -19,11 +20,11 @@ dependencies {
     implementation(compose.material)
 
     // Exposed ORM for SQLite
-    val exposedVersion = "0.50.1"
+    val exposedVersion = "1.2.0"
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
-    implementation("org.xerial:sqlite-jdbc:3.50.3.0")
+    implementation("org.xerial:sqlite-jdbc:3.53.0.0")
 
     // Ktor for Local API
     implementation("io.ktor:ktor-server-core:$ktorVersion")
@@ -37,16 +38,16 @@ dependencies {
     implementation("net.java.dev.jna:jna-platform:5.17.0")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.5.20")
+    implementation("ch.qos.logback:logback-classic:1.5.32")
 
     // WebView for Compose
     implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
 
     // Testing
     testImplementation(kotlin("test"))
-    testImplementation("io.mockk:mockk:1.14.6")
-    testImplementation("org.assertj:assertj-core:3.27.6")
-    testImplementation("com.h2database:h2:2.2.224")
+    testImplementation("io.mockk:mockk:1.14.9")
+    testImplementation("org.assertj:assertj-core:3.27.7")
+    testImplementation("com.h2database:h2:2.4.240")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     testImplementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -57,6 +58,9 @@ configurations.all {
         if (requested.group == "io.ktor") {
             useVersion(ktorVersion)
         }
+        if (requested.group == "io.netty") {
+            useVersion("4.2.12.Final")
+        }
     }
 }
 
@@ -64,14 +68,21 @@ tasks.test {
     useJUnitPlatform()
 }
 
-val buildFrontend = tasks.register<Exec>("buildFrontend") {
+node {
+    version.set("22.13.1")
+    download.set(true)
+    nodeProjectDir.set(file("${project.rootDir}/frontend"))
+}
+
+val buildFrontend = tasks.register<com.github.gradle.node.npm.task.NpmTask>("buildFrontend") {
     group = "build"
-    workingDir = File(project.rootDir, "frontend")
-    if (System.getProperty("os.name").lowercase().contains("windows")) {
-        commandLine("cmd", "/c", "npm install && npm run build")
-    } else {
-        commandLine("bash", "-c", "npm install && npm run build")
-    }
+    dependsOn("npmInstall")
+    npmCommand.set(listOf("run", "build"))
+    inputs.dir(file("${project.rootDir}/frontend/src"))
+    inputs.dir(file("${project.rootDir}/frontend/public"))
+    inputs.file(file("${project.rootDir}/frontend/package.json"))
+    inputs.file(file("${project.rootDir}/frontend/package-lock.json"))
+    outputs.dir(file("${project.rootDir}/frontend/dist"))
 }
 
 // Ensure frontend is built before resources are processed

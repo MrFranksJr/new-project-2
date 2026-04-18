@@ -33,23 +33,16 @@
 
 #### Prerequisites
 - **JDK 17 or higher**
-- **Node.js (v18+) and npm**
 - **Windows OS** (Required for process tracking and hardware telemetry features)
 
 #### Running Locally
 1. **Clone the repository.**
-2. **Build the Frontend**:
-   ```bash
-   cd frontend
-   npm install
-   npm run build
-   ```
-3. **Run the Backend**:
+2. **Run the Application**:
    From the project root:
    ```bash
    ./gradlew run
    ```
-   *Note: This will launch the Compose window, which will serve the built frontend from `frontend/dist` via the internal Ktor server.*
+   *Note: This will automatically build the frontend, download Node.js if necessary, and launch the Compose window.*
 
 ---
 

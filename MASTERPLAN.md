@@ -55,7 +55,10 @@
 ## Phase 9: Maintenance
 - [x] 9.1. Upgrade Kotlin Gradle plugins from 2.0.0 to 2.3.20
 - [x] 9.2. Remediate frontend dependency vulnerabilities (Vite advisory range) and verify with `npm audit` + `./gradlew test`
-- [x] 9.3. Remediate backend dependency vulnerabilities via safe version upgrades (Ktor/JNA/Logback/test libs) and verify with `./gradlew test`
+- [x] 9.3. Remediate backend dependency vulnerabilities via safe version upgrades (Ktor 3.4.2/JNA/Logback/test libs/Exposed 1.2.0) and verify with `./gradlew test` (Fixed H2 2.4+ compatibility and Netty CVE-2026-33870 by forcing 4.2.12.Final)
 
 ## Phase 10: Technical Debt & Modernization
 - [x] 10.1. Replace deprecated Exposed DSL methods in repositories and tests (0.50.1 migration)
+- [x] 10.2. Migrate frontend build to Gradle Node plugin for environment portability
+- [x] 10.3. Synchronize IDE Kotlin compiler version with Gradle (2.3.20)
+- [x] 10.4. Cleanup temporary diagnostic files (compile_errors.txt, deps_compile.txt)

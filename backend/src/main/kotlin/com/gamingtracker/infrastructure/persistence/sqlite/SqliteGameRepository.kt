@@ -4,9 +4,9 @@ import com.gamingtracker.application.ports.output.GameRepository
 import com.gamingtracker.domain.Game
 import com.gamingtracker.domain.GameStatus
 import com.gamingtracker.domain.GamingPC
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class SqliteGameRepository : GameRepository {
     override fun findByName(name: String): Game? = transaction {

@@ -2,8 +2,8 @@ package com.gamingtracker.infrastructure.persistence.sqlite
 
 import com.gamingtracker.application.ports.output.SessionRepository
 import com.gamingtracker.domain.GamingSession
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class SqliteSessionRepository : SessionRepository {
     override fun save(session: GamingSession) = transaction {

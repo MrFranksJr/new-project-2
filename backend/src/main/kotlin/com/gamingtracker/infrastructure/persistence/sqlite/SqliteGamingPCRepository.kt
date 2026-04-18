@@ -2,8 +2,9 @@ package com.gamingtracker.infrastructure.persistence.sqlite
 
 import com.gamingtracker.application.ports.output.GamingPCRepository
 import com.gamingtracker.domain.GamingPC
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class SqliteGamingPCRepository : GamingPCRepository {
     override fun findInUse(): GamingPC? = transaction {

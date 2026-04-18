@@ -4,8 +4,9 @@ import com.gamingtracker.domain.Game
 import com.gamingtracker.domain.GameStatus
 import com.gamingtracker.domain.GamingPC
 import com.gamingtracker.domain.GamingSession
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.BeforeTest
