@@ -21,7 +21,7 @@
 - [x] 3.1. Design Modern Component Architecture
 - [x] 3.2. Implement Summary and Game List Views
 - [x] 3.3. Establish API Communication (Ktor + Zustand/TanStack Query)
-- [ ] 3.4. Embed UI in Compose for Desktop (WebView/JCEF)
+- [x] 3.4. Embed UI in Compose for Desktop (WebView/JCEF)
 
 ## Phase 4: Packaging & Distribution
 - [ ] 4.1. Configure jpackage / Compose Gradle Plugin for MSI/EXE
@@ -29,5 +29,5 @@
 
 ## Phase 5: Testing & Verification
 - [x] 5.1. 100% Coverage for Core Tracking Logic (Unit Tests)
-- [ ] 5.2. Integration Tests for Persistence and Migrations
+- [x] 5.2. Integration Tests for Persistence and Migrations
 - [ ] 5.3. E2E Validation of Full User Journey

@@ -8,8 +8,10 @@ import com.gaminggaiden.rebirth.infrastructure.api.ktor.dtos.GamesResponse
 import com.gaminggaiden.rebirth.infrastructure.api.ktor.dtos.SummaryDTO
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.io.File
 
 fun Application.configureRouting(
     getGamesUseCase: GetGamesUseCase,
@@ -17,6 +19,11 @@ fun Application.configureRouting(
     migrateLegacyDataUseCase: MigrateLegacyDataUseCase
 ) {
     routing {
+        // Serve static files from frontend/dist
+        staticFiles("/", File("frontend/dist")) {
+            default("index.html")
+        }
+
         route("/api") {
             get("/games") {
                 val games = getGamesUseCase.execute()

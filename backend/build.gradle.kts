@@ -37,6 +37,9 @@ dependencies {
     // Logging
     implementation("ch.qos.logback:logback-classic:1.5.6")
 
+    // WebView for Compose
+    implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
+
     // Testing
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.13.11")
