@@ -51,3 +51,6 @@
 - [x] 8.1. Verify MSI/EXE uninstall default behavior (installer artifacts removed; app data/registry custom cleanup handled in-app)
 - [x] 8.2. Backend cleanup flow with TDD (CleanupPort/PerformCleanup, WindowsCleanupManager, `/api/cleanup`)
 - [x] 8.3. Uninstall UX entry points (tray `Uninstall` + frontend cleanup view with optional DB deletion)
+
+## Phase 9: Maintenance
+- [x] 9.1. Upgrade Kotlin Gradle plugins from 2.0.0 to 2.3.20
