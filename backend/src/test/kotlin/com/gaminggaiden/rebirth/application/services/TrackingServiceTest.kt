@@ -10,8 +10,8 @@ import io.mockk.verify
 import kotlin.test.*
 
 class TrackingServiceTest {
-    private val gameRepository = mockk<GameRepository>()
-    private val processMonitor = mockk<ProcessMonitor>()
+    private val gameRepository = mockk<GameRepository>(relaxed = true)
+    private val processMonitor = mockk<ProcessMonitor>(relaxed = true)
     private val trackGameSessionUseCase = mockk<TrackGameSessionUseCase>(relaxed = true)
     private val trackingService = TrackingService(gameRepository, processMonitor, trackGameSessionUseCase)
 
