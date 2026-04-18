@@ -91,6 +91,17 @@ The application includes a built-in update check logic:
 
 ---
 
+### 🗑️ Uninstall & Cleanup
+
+- **MSI/EXE default uninstall**: Windows uninstall (Settings > Apps or Add/Remove Programs) removes installed application files and shortcuts.
+- **What default uninstall does not remove**: user data like `gaming-tracker.db` and custom app-owned autostart cleanup decisions are not prompted by default MSI behavior.
+- **In-app cleanup flow**: before uninstalling, open `#uninstall` from the tray menu (`Uninstall`) and run cleanup.
+  - You can choose whether to delete the local database (`gaming-tracker.db`).
+  - Cleanup also removes the app autostart registry entry when present.
+- After cleanup finishes, uninstall the app via Windows Settings > Apps & features.
+
+---
+
 ### 🏗️ Ways of Working
 
 For details on the project's development principles (TDD, DDD, Clean Architecture), please refer to [AGENTS.md](./AGENTS.md).

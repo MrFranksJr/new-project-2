@@ -6,6 +6,7 @@ import com.gamingtracker.application.ports.input.GetSummaryUseCase
 import com.gamingtracker.application.ports.input.GetUpdateStatusUseCase
 import com.gamingtracker.application.usecases.ToggleAutostart
 import com.gamingtracker.application.usecases.GetAutostartStatus
+import com.gamingtracker.application.usecases.PerformCleanup
 import com.gamingtracker.application.ports.input.MigrateLegacyDataUseCase
 import com.gamingtracker.infrastructure.api.ktor.dtos.*
 import io.ktor.http.*
@@ -22,7 +23,8 @@ fun Application.configureRouting(
     addGameUseCase: AddGameUseCase,
     getUpdateStatusUseCase: GetUpdateStatusUseCase,
     toggleAutostartUseCase: ToggleAutostart,
-    getAutostartStatusUseCase: GetAutostartStatus
+    getAutostartStatusUseCase: GetAutostartStatus,
+    performCleanupUseCase: PerformCleanup
 ) {
     routing {
         // Serve static files from resources
@@ -93,12 +95,23 @@ fun Application.configureRouting(
                 val body = call.receive<Map<String, Boolean>>()
                 if ("enabled" !in body) {
                     call.respond(HttpStatusCode.BadRequest, mapOf("error" to "enabled is required"))
-                    return@post
+                } else {
+                    val enabled = body["enabled"]!!
+                    toggleAutostartUseCase(enabled)
+                    call.respond(mapOf("enabled" to enabled))
                 }
-                val enabled = body["enabled"]!!
-                toggleAutostartUseCase(enabled)
-                call.respond(mapOf("enabled" to enabled))
+            }
+
+            post("/cleanup") {
+                val request = call.receive<CleanupRequest>()
+                val result = performCleanupUseCase(request.deleteDb)
+                call.respond(
+                    mapOf(
+                        "autostartRemoved" to result.autostartRemoved,
+                        "dbDeleted" to result.dbDeleted
+                    )
+                )
             }
         }
     }
-} 
+}

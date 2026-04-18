@@ -46,3 +46,8 @@
 - [x] 7.1. Backend autostart with TDD (ports/usecases/tests/impl/JNA/endpoints)
 - [x] 7.2. System tray with menu (Open Summary/Games/Add/Exit), window hide-on-close
 - [x] 7.3. Frontend toggle switch UI (query/mutation)
+
+## Phase 8: Uninstall Cleanup Flow
+- [x] 8.1. Verify MSI/EXE uninstall default behavior (installer artifacts removed; app data/registry custom cleanup handled in-app)
+- [x] 8.2. Backend cleanup flow with TDD (CleanupPort/PerformCleanup, WindowsCleanupManager, `/api/cleanup`)
+- [x] 8.3. Uninstall UX entry points (tray `Uninstall` + frontend cleanup view with optional DB deletion)

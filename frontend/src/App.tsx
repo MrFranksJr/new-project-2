@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { gameService } from './services/api';
 import SummaryCard from './components/SummaryCard';
 import GameList from './components/GameList';
@@ -6,6 +7,8 @@ import AddGameForm from './components/AddGameForm';
 import './App.css';
 
 function App() {
+  const currentView = window.location.hash || '#summary';
+  const [deleteDb, setDeleteDb] = useState(false);
   const { data: summary, isLoading: isSummaryLoading } = useQuery({
     queryKey: ['summary'],
     queryFn: gameService.getSummary,
@@ -36,6 +39,10 @@ function App() {
     },
   });
 
+  const cleanupMutation = useMutation({
+    mutationFn: (deleteDb: boolean) => gameService.cleanup(deleteDb),
+  });
+
   return (
     <div className="app-container">
       {updateStatus?.hasUpdate && (
@@ -59,11 +66,36 @@ function App() {
       </header>
       
       <main>
-        <SummaryCard summary={summary} isLoading={isSummaryLoading} />
-        <div className="main-content">
-          <GameList games={games} isLoading={isGamesLoading} />
-          <AddGameForm />
-        </div>
+        {currentView === '#uninstall' ? (
+          <section>
+            <h2>Uninstall Cleanup</h2>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <input
+                type="checkbox"
+                checked={deleteDb}
+                onChange={(e) => setDeleteDb(e.target.checked)}
+              />
+              Delete local database (`gaming-tracker.db`)
+            </label>
+            <button
+              disabled={cleanupMutation.isPending}
+              onClick={() => cleanupMutation.mutate(deleteDb)}
+            >
+              Run cleanup
+            </button>
+            {cleanupMutation.isSuccess && (
+              <p>Cleanup done. Uninstall via Windows Settings &gt; Apps &amp; features.</p>
+            )}
+          </section>
+        ) : (
+          <>
+            <SummaryCard summary={summary} isLoading={isSummaryLoading} />
+            <div className="main-content">
+              <GameList games={games} isLoading={isGamesLoading} />
+              <AddGameForm />
+            </div>
+          </>
+        )}
       </main>
       
       <footer>

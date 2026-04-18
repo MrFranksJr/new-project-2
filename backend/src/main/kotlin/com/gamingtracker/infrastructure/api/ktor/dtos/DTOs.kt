@@ -33,3 +33,6 @@ data class UpdateStatusDTO(
     val currentVersion: String,
     val downloadUrl: String?
 )
+
+@Serializable
+data class CleanupRequest(val deleteDb: Boolean)

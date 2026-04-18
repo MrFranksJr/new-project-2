@@ -33,4 +33,8 @@ export const gameService = {
     const response = await api.post('/autostart', { enabled });
     return response.data.enabled;
   },
+  cleanup: async (deleteDb: boolean): Promise<{ autostartRemoved: boolean; dbDeleted: boolean }> => {
+    const response = await api.post('/cleanup', { deleteDb });
+    return response.data;
+  },
 };

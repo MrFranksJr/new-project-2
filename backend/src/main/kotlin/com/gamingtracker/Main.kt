@@ -6,15 +6,16 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.gamingtracker.application.ports.output.ProcessMonitor
 import com.gamingtracker.application.ports.output.AutostartPort
+import com.gamingtracker.application.ports.output.CleanupPort
 import com.gamingtracker.application.services.TrackingService
 import com.gamingtracker.application.usecases.*
 import com.gamingtracker.infrastructure.api.ktor.startKtorServer
 import com.gamingtracker.infrastructure.persistence.sqlite.*
 import com.gamingtracker.infrastructure.system.StaticVersionProvider
+import com.gamingtracker.infrastructure.system.windows.WindowsCleanupManager
 import com.gamingtracker.infrastructure.system.windows.WindowsProcessMonitor
 import com.gamingtracker.infrastructure.system.windows.WindowsAutostartManager
 import com.gamingtracker.infrastructure.system.windows.WindowsRegistryStatsProvider
-import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
 import androidx.compose.runtime.getValue
@@ -25,11 +26,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.window.Tray
-import androidx.compose.ui.window.TrayMenu
-import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
 
 fun main() {
     // 1. Initialize Database
@@ -64,6 +64,19 @@ fun main() {
     val toggleAutostartUseCase = ToggleAutostart(autostartPort)
 
     val getAutostartStatusUseCase = GetAutostartStatus(autostartPort)
+
+    val cleanupPort: CleanupPort = if (System.getProperty("os.name").contains("Windows")) {
+        WindowsCleanupManager("gaming-tracker.db")
+    } else {
+        object : CleanupPort {
+            override fun performCleanup(deleteDb: Boolean) = com.gamingtracker.application.ports.output.CleanupResult(
+                autostartRemoved = false,
+                dbDeleted = deleteDb && File("gaming-tracker.db").delete()
+            )
+        }
+    }
+
+    val performCleanupUseCase = PerformCleanup(cleanupPort)
 
     if (!autostartPort.isEnabled()) {
         autostartPort.setEnabled(true)
@@ -100,6 +113,7 @@ fun main() {
         getUpdateStatusUseCase = getUpdateStatusUseCase,
         toggleAutostartUseCase = toggleAutostartUseCase,
         getAutostartStatusUseCase = getAutostartStatusUseCase,
+        performCleanupUseCase = performCleanupUseCase,
         port = 8080,
         wait = false
     )
@@ -108,37 +122,42 @@ fun main() {
     @OptIn(ExperimentalComposeUiApi::class)
     application {
         var url by remember { mutableStateOf("http://localhost:8080") }
-        val windowState = rememberWindowState(visible = true)
+        var isWindowVisible by remember { mutableStateOf(true) }
         Tray(
             icon = ColorPainter(Color(0xFF1976D2)),
             menu = {
-                TrayMenu("Open Summary") {
-                    windowState.isVisible = true
+                Item("Open Summary") {
+                    isWindowVisible = true
                     url = "http://localhost:8080/#summary"
                 }
-                TrayMenu("Games") {
-                    windowState.isVisible = true
+                Item("Games") {
+                    isWindowVisible = true
                     url = "http://localhost:8080/#games"
                 }
-                TrayMenu("Add Game") {
-                    windowState.isVisible = true
+                Item("Add Game") {
+                    isWindowVisible = true
                     url = "http://localhost:8080/#add"
                 }
-                TrayMenu("Exit") {
+                Item("Uninstall") {
+                    isWindowVisible = true
+                    url = "http://localhost:8080/#uninstall"
+                }
+                Item("Exit") {
                     exitApplication()
                 }
             }
         )
-        Window(
-            state = windowState,
-            onCloseRequest = { windowState.isVisible = false },
-            title = "Gaming Tracker"
-        ) {
-            val state = rememberWebViewState(url = url)
-            WebView(
-                state = state,
-                modifier = Modifier.fillMaxSize()
-            )
+        if (isWindowVisible) {
+            Window(
+                onCloseRequest = { isWindowVisible = false },
+                title = "Gaming Tracker"
+            ) {
+                val state = rememberWebViewState(url = url)
+                WebView(
+                    state = state,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

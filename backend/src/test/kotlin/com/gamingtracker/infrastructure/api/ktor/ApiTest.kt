@@ -6,6 +6,10 @@ import com.gamingtracker.application.ports.input.GetGamesUseCase
 import com.gamingtracker.application.ports.input.GetSummaryUseCase
 import com.gamingtracker.application.ports.input.GetUpdateStatusUseCase
 import com.gamingtracker.application.ports.input.MigrateLegacyDataUseCase
+import com.gamingtracker.application.ports.output.CleanupResult
+import com.gamingtracker.application.usecases.GetAutostartStatus
+import com.gamingtracker.application.usecases.PerformCleanup
+import com.gamingtracker.application.usecases.ToggleAutostart
 import com.gamingtracker.domain.Game
 import com.gamingtracker.domain.UpdateStatus
 import io.ktor.client.request.*
@@ -26,14 +30,30 @@ class ApiTest {
     private val migrateLegacyDataUseCase = mockk<MigrateLegacyDataUseCase>()
     private val addGameUseCase = mockk<AddGameUseCase>()
     private val getUpdateStatusUseCase = mockk<GetUpdateStatusUseCase>()
+    private val toggleAutostartUseCase = mockk<ToggleAutostart>(relaxed = true)
+    private val getAutostartStatusUseCase = mockk<GetAutostartStatus>()
+    private val performCleanupUseCase = mockk<PerformCleanup>()
+
+    private fun Application.installRouting() {
+        install(ContentNegotiation) {
+            json()
+        }
+        configureRouting(
+            getGamesUseCase,
+            getSummaryUseCase,
+            migrateLegacyDataUseCase,
+            addGameUseCase,
+            getUpdateStatusUseCase,
+            toggleAutostartUseCase,
+            getAutostartStatusUseCase,
+            performCleanupUseCase
+        )
+    }
 
     @Test
     fun `should return games list`() = testApplication {
         application {
-            install(ContentNegotiation) {
-                json()
-            }
-            configureRouting(getGamesUseCase, getSummaryUseCase, migrateLegacyDataUseCase, addGameUseCase, getUpdateStatusUseCase)
+            installRouting()
         }
         
         val games = listOf(Game("Hades", "Hades.exe"))
@@ -49,10 +69,7 @@ class ApiTest {
     @Test
     fun `should return summary`() = testApplication {
         application {
-            install(ContentNegotiation) {
-                json()
-            }
-            configureRouting(getGamesUseCase, getSummaryUseCase, migrateLegacyDataUseCase, addGameUseCase, getUpdateStatusUseCase)
+            installRouting()
         }
         
         val summary = GamingSummary(totalPlaytimeMinutes = 100, activeGameName = null, gamingPCName = "MyRig")
@@ -68,10 +85,7 @@ class ApiTest {
     @Test
     fun `should add a game`() = testApplication {
         application {
-            install(ContentNegotiation) {
-                json()
-            }
-            configureRouting(getGamesUseCase, getSummaryUseCase, migrateLegacyDataUseCase, addGameUseCase, getUpdateStatusUseCase)
+            installRouting()
         }
 
         val game = Game("Starfield", "Starfield.exe")
@@ -89,10 +103,7 @@ class ApiTest {
     @Test
     fun `should check for updates`() = testApplication {
         application {
-            install(ContentNegotiation) {
-                json()
-            }
-            configureRouting(getGamesUseCase, getSummaryUseCase, migrateLegacyDataUseCase, addGameUseCase, getUpdateStatusUseCase)
+            installRouting()
         }
 
         val updateStatus = UpdateStatus(hasUpdate = true, latestVersion = "1.1.0", currentVersion = "1.0.0", downloadUrl = "http://dl.com")
@@ -103,5 +114,23 @@ class ApiTest {
         assertEquals(HttpStatusCode.OK, response.status)
         assert(response.bodyAsText().contains("1.1.0"))
         assert(response.bodyAsText().contains("true"))
+    }
+
+    @Test
+    fun `should perform cleanup with delete db flag`() = testApplication {
+        application {
+            installRouting()
+        }
+
+        every { performCleanupUseCase(true) } returns CleanupResult(autostartRemoved = true, dbDeleted = true)
+
+        val response = client.post("/api/cleanup") {
+            contentType(ContentType.Application.Json)
+            setBody("{\"deleteDb\":true}")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assert(response.bodyAsText().contains("autostartRemoved"))
+        assert(response.bodyAsText().contains("dbDeleted"))
     }
 }

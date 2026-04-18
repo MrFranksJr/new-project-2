@@ -2,9 +2,10 @@ package com.gamingtracker
 
 import com.gamingtracker.application.ports.output.ProcessMonitor
 import com.gamingtracker.application.ports.output.SystemStatsProvider
+import com.gamingtracker.application.ports.output.CleanupPort
+import com.gamingtracker.application.ports.output.CleanupResult
 import com.gamingtracker.application.services.TrackingService
 import com.gamingtracker.application.usecases.*
-import com.gamingtracker.domain.GamingPC
 import com.gamingtracker.infrastructure.api.ktor.configureRouting
 import com.gamingtracker.infrastructure.api.ktor.dtos.AddGameRequest
 import com.gamingtracker.infrastructure.api.ktor.dtos.GamesResponse
@@ -24,7 +25,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.time.Instant
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -67,6 +67,11 @@ class E2EJourneyTest {
         val trackSession = TrackGameSession(gameRepo, sessionRepo, pcRepo)
         val migrate = MigrateLegacyData(gameRepo, sessionRepo, legacyAdapter)
         val checkForUpdates = CheckForUpdates(mockk(relaxed = true), "1.0.0")
+        val toggleAutostart = ToggleAutostart(mockk(relaxed = true))
+        val getAutostartStatus = GetAutostartStatus(mockk(relaxed = true))
+        val performCleanup = PerformCleanup(object : CleanupPort {
+            override fun performCleanup(deleteDb: Boolean): CleanupResult = CleanupResult(false, false)
+        })
 
         // Tracking service
         val trackingService = TrackingService(gameRepo, processMonitor, trackSession)
@@ -75,7 +80,7 @@ class E2EJourneyTest {
             install(ServerContentNegotiation) {
                 json()
             }
-            configureRouting(getGames, getSummary, migrate, addGame, checkForUpdates)
+            configureRouting(getGames, getSummary, migrate, addGame, checkForUpdates, toggleAutostart, getAutostartStatus, performCleanup)
         }
 
         val client = createClient {
