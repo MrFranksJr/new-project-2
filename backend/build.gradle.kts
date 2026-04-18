@@ -39,9 +39,7 @@ dependencies {
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.5.32")
-
-    // WebView for Compose
-    implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     // Testing
     testImplementation(kotlin("test"))
@@ -80,14 +78,26 @@ val buildFrontend = tasks.register<com.github.gradle.node.npm.task.NpmTask>("bui
     npmCommand.set(listOf("run", "build"))
     inputs.dir(file("${project.rootDir}/frontend/src"))
     inputs.dir(file("${project.rootDir}/frontend/public"))
+    inputs.file(file("${project.rootDir}/frontend/index.html"))
     inputs.file(file("${project.rootDir}/frontend/package.json"))
     inputs.file(file("${project.rootDir}/frontend/package-lock.json"))
+    inputs.file(file("${project.rootDir}/frontend/vite.config.ts"))
+    if (file("${project.rootDir}/frontend/tsconfig.json").exists()) {
+        inputs.file(file("${project.rootDir}/frontend/tsconfig.json"))
+    }
+    if (file("${project.rootDir}/frontend/tsconfig.app.json").exists()) {
+        inputs.file(file("${project.rootDir}/frontend/tsconfig.app.json"))
+    }
+    if (file("${project.rootDir}/frontend/tsconfig.node.json").exists()) {
+        inputs.file(file("${project.rootDir}/frontend/tsconfig.node.json"))
+    }
     outputs.dir(file("${project.rootDir}/frontend/dist"))
 }
 
 // Ensure frontend is built before resources are processed
 tasks.processResources {
     dependsOn(buildFrontend)
+    duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
     from(File(project.rootDir, "frontend/dist")) {
         into("static")
     }
@@ -96,6 +106,13 @@ tasks.processResources {
 compose.desktop {
     application {
         mainClass = "com.gamingtracker.MainKt"
+        
+        jvmArgs += listOf(
+            "--enable-native-access=ALL-UNNAMED",
+            "--add-opens=java.base/java.nio=ALL-UNNAMED",
+            "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+            "-Dio.netty.noUnsafe=true"
+        )
 
         nativeDistributions {
             targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Exe)

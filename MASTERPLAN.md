@@ -57,9 +57,26 @@
 - [x] 9.2. Remediate frontend dependency vulnerabilities (Vite advisory range) and verify with `npm audit` + `./gradlew test`
 - [x] 9.3. Remediate backend dependency vulnerabilities via safe version upgrades (Ktor 3.4.2/JNA/Logback/test libs/Exposed 1.2.0) and verify with `./gradlew test` (Fixed H2 2.4+ compatibility and Netty CVE-2026-33870 by forcing 4.2.12.Final)
 
-## Phase 10: Technical Debt & Modernization
+## Phase 10: Technical Debt & Modernization ✓
 - [x] 10.1. Replace deprecated Exposed DSL methods in repositories and tests (0.50.1 migration)
 - [x] 10.2. Migrate frontend build to Gradle Node plugin for environment portability
 - [x] 10.3. Synchronize IDE Kotlin compiler version with Gradle (2.3.20)
 - [x] 10.4. Cleanup temporary diagnostic files (compile_errors.txt, deps_compile.txt)
 - [x] 10.5. Fix SQLite JDBC driver class name and prevent legacy database from overriding default connection
+- [x] 10.6. Fix Skiko linkage error by aligning Compose Gradle plugin (1.7.1) with transitive Compose version
+- [x] 10.7. Resolve white window bug by using root-based Vite asset paths and fixing filename mismatches
+- [x] 10.8. Address Java 25 / Netty native access warnings with JVM arguments
+- [x] 10.9. Add Ktor CallLogging for improved frontend-to-backend diagnostics
+- [x] 10.10. Implement server-readiness check before UI launch to prevent initial load failure in WebView
+- [x] 10.11. Update build inputs to ensure robust frontend-to-backend resource synchronization
+- [x] 10.12. Disable Vite filename hashing for stable asset references
+- [x] 10.13. Add diagnostic background color to index.html for UI troubleshooting
+- [x] 10.14. Verify Ktor MIME types for JS/CSS assets via automated tests
+- [x] 10.15. Add classpath diagnostics and WebView status bar for deep troubleshooting
+- [x] 10.16. Implement explicit routing with diagnostics for static index.html
+
+## Phase 11: Pivot to Browser-as-UI Architecture
+- [ ] 11.1. Strip KCEF and WebView dependencies from backend
+- [ ] 11.2. Implement "Browser-as-UI" mechanism (launch system browser from tray)
+- [ ] 11.3. Remove Compose Window shell and manage lifecycle via Tray
+- [ ] 11.4. Verify backend background service stability

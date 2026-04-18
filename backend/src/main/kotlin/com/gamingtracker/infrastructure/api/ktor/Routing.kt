@@ -1,13 +1,9 @@
 package com.gamingtracker.infrastructure.api.ktor
 
-import com.gamingtracker.application.ports.input.AddGameUseCase
-import com.gamingtracker.application.ports.input.GetGamesUseCase
-import com.gamingtracker.application.ports.input.GetSummaryUseCase
-import com.gamingtracker.application.ports.input.GetUpdateStatusUseCase
-import com.gamingtracker.application.usecases.ToggleAutostart
+import com.gamingtracker.application.ports.input.*
 import com.gamingtracker.application.usecases.GetAutostartStatus
 import com.gamingtracker.application.usecases.PerformCleanup
-import com.gamingtracker.application.ports.input.MigrateLegacyDataUseCase
+import com.gamingtracker.application.usecases.ToggleAutostart
 import com.gamingtracker.infrastructure.api.ktor.dtos.*
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -27,10 +23,27 @@ fun Application.configureRouting(
     performCleanupUseCase: PerformCleanup
 ) {
     routing {
-        // Serve static files from resources
-        staticResources("/", "static") {
-            default("index.html")
+        // Diagnostic endpoint
+        get("/api/health") {
+            call.respond(mapOf("status" to "ok", "timestamp" to System.currentTimeMillis()))
         }
+
+        // Serve static files from resources
+        // We use explicit handling for the root to provide better diagnostics
+        get("/") {
+            println("[DEBUG] Request for / - serving static/index.html")
+            val resource = call.resolveResource("static/index.html")
+            if (resource != null) {
+                println("[DEBUG] Resource static/index.html found: $resource")
+                call.respond(resource)
+            } else {
+                println("[ERROR] static/index.html not found in resources")
+                call.respondText("Error: Frontend assets not found. Please run ./gradlew :backend:processResources", status = HttpStatusCode.InternalServerError)
+            }
+        }
+
+        // Serve other assets
+        staticResources("/", "static")
 
         route("/api") {
             get("/games") {

@@ -1,8 +1,8 @@
 import axios from 'axios';
-import type { Game, GamesResponse, Summary, UpdateStatus } from '../types';
+import type {Game, GamesResponse, Summary, UpdateStatus} from '../types';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'http://127.0.0.1:8080/api',
 });
 
 export const gameService = {

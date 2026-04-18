@@ -1,13 +1,22 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { gameService } from './services/api';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {useEffect, useState} from 'react';
+import {gameService} from './services/api';
 import SummaryCard from './components/SummaryCard';
 import GameList from './components/GameList';
 import AddGameForm from './components/AddGameForm';
 import './App.css';
 
 function App() {
-  const currentView = window.location.hash || '#summary';
+  const [currentView, setCurrentView] = useState(window.location.hash || '#summary');
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentView(window.location.hash || '#summary');
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   const [deleteDb, setDeleteDb] = useState(false);
   const { data: summary, isLoading: isSummaryLoading } = useQuery({
     queryKey: ['summary'],
@@ -86,6 +95,14 @@ function App() {
             {cleanupMutation.isSuccess && (
               <p>Cleanup done. Uninstall via Windows Settings &gt; Apps &amp; features.</p>
             )}
+          </section>
+        ) : currentView === '#add' ? (
+          <section className="view-section">
+            <AddGameForm />
+          </section>
+        ) : currentView === '#games' ? (
+          <section className="view-section">
+            <GameList games={games} isLoading={isGamesLoading} />
           </section>
         ) : (
           <>

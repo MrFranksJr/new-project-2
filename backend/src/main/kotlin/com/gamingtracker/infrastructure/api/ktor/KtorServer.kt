@@ -1,20 +1,17 @@
 package com.gamingtracker.infrastructure.api.ktor
 
-import com.gamingtracker.application.ports.input.AddGameUseCase
-import com.gamingtracker.application.ports.input.GetGamesUseCase
-import com.gamingtracker.application.ports.input.GetSummaryUseCase
-import com.gamingtracker.application.ports.input.GetUpdateStatusUseCase
-import com.gamingtracker.application.usecases.ToggleAutostart
+import com.gamingtracker.application.ports.input.*
 import com.gamingtracker.application.usecases.GetAutostartStatus
 import com.gamingtracker.application.usecases.PerformCleanup
-import com.gamingtracker.application.ports.input.MigrateLegacyDataUseCase
+import com.gamingtracker.application.usecases.ToggleAutostart
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.http.*
 
 fun startKtorServer(
     getGamesUseCase: GetGamesUseCase,
@@ -29,6 +26,7 @@ fun startKtorServer(
     wait: Boolean = false
 ) {
     embeddedServer(Netty, port = port) {
+        install(CallLogging)
         install(ContentNegotiation) {
             json()
         }
