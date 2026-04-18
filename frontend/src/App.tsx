@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { gameService } from './services/api';
 import SummaryCard from './components/SummaryCard';
 import GameList from './components/GameList';
@@ -23,6 +23,19 @@ function App() {
     refetchInterval: 3600000, // 1 hour
   });
 
+  const queryClient = useQueryClient();
+  const { data: autostart, isLoading: isAutostartLoading } = useQuery({
+    queryKey: ['autostart'],
+    queryFn: () => gameService.getAutostart(),
+  });
+
+  const toggleMutation = useMutation({
+    mutationFn: (enabled: boolean) => gameService.toggleAutostart(enabled),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['autostart'] });
+    },
+  });
+
   return (
     <div className="app-container">
       {updateStatus?.hasUpdate && (
@@ -32,8 +45,17 @@ function App() {
         </div>
       )}
       
-      <header>
+      <header style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <h1>Gaming Tracker</h1>
+        <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'}}>
+          Autostart on login
+          <input
+            type="checkbox"
+            checked={autostart?.enabled ?? false}
+            onChange={(e) => toggleMutation.mutate(e.target.checked)}
+            disabled={toggleMutation.isPending || isAutostartLoading}
+          />
+        </label>
       </header>
       
       <main>

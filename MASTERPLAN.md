@@ -41,3 +41,8 @@
 - [x] 6.4. Implement frontend unit and component tests
 - [x] 6.5. Improve backend coverage for repositories and legacy adapters
 - [x] 6.6. Remove unused repository and service methods (Cleanup)
+
+## Phase 7: Tray and Autostart Features ✓
+- [x] 7.1. Backend autostart with TDD (ports/usecases/tests/impl/JNA/endpoints)
+- [x] 7.2. System tray with menu (Open Summary/Games/Add/Exit), window hide-on-close
+- [x] 7.3. Frontend toggle switch UI (query/mutation)

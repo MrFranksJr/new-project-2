@@ -25,4 +25,12 @@ export const gameService = {
     const response = await api.get<UpdateStatus>('/update-check');
     return response.data;
   },
+  getAutostart: async (): Promise<{ enabled: boolean }> => {
+    const response = await api.get('/autostart');
+    return response.data;
+  },
+  toggleAutostart: async (enabled: boolean): Promise<boolean> => {
+    const response = await api.post('/autostart', { enabled });
+    return response.data.enabled;
+  },
 };

@@ -5,15 +5,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.gamingtracker.application.ports.output.ProcessMonitor
+import com.gamingtracker.application.ports.output.AutostartPort
 import com.gamingtracker.application.services.TrackingService
 import com.gamingtracker.application.usecases.*
 import com.gamingtracker.infrastructure.api.ktor.startKtorServer
 import com.gamingtracker.infrastructure.persistence.sqlite.*
 import com.gamingtracker.infrastructure.system.StaticVersionProvider
 import com.gamingtracker.infrastructure.system.windows.WindowsProcessMonitor
+import com.gamingtracker.infrastructure.system.windows.WindowsAutostartManager
 import com.gamingtracker.infrastructure.system.windows.WindowsRegistryStatsProvider
 import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.window.Tray
+import androidx.compose.ui.window.TrayMenu
+import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -38,6 +51,24 @@ fun main() {
             override fun getRunningExecutables(): List<String> = emptyList()
         }
     }
+
+    val autostartPort: AutostartPort = if (System.getProperty("os.name").contains("Windows")) {
+        WindowsAutostartManager()
+    } else {
+        object : AutostartPort {
+            override fun isEnabled(): Boolean = false
+            override fun setEnabled(enabled: Boolean) {}
+        }
+    }
+
+    val toggleAutostartUseCase = ToggleAutostart(autostartPort)
+
+    val getAutostartStatusUseCase = GetAutostartStatus(autostartPort)
+
+    if (!autostartPort.isEnabled()) {
+        autostartPort.setEnabled(true)
+    }
+
     // Legacy database will be connected within the use case when needed
     val legacyDatabaseAdapter = SqliteLegacyDatabaseAdapter("GamingGaiden.db")
 
@@ -67,14 +98,43 @@ fun main() {
         migrateLegacyDataUseCase = migrateLegacyDataUseCase,
         addGameUseCase = addGameUseCase,
         getUpdateStatusUseCase = getUpdateStatusUseCase,
+        toggleAutostartUseCase = toggleAutostartUseCase,
+        getAutostartStatusUseCase = getAutostartStatusUseCase,
         port = 8080,
         wait = false
     )
 
     // 5. Start Compose UI
+    @OptIn(ExperimentalComposeUiApi::class)
     application {
-        Window(onCloseRequest = ::exitApplication, title = "Gaming Tracker") {
-            val state = rememberWebViewState("http://localhost:8080")
+        var url by remember { mutableStateOf("http://localhost:8080") }
+        val windowState = rememberWindowState(visible = true)
+        Tray(
+            icon = ColorPainter(Color(0xFF1976D2)),
+            menu = {
+                TrayMenu("Open Summary") {
+                    windowState.isVisible = true
+                    url = "http://localhost:8080/#summary"
+                }
+                TrayMenu("Games") {
+                    windowState.isVisible = true
+                    url = "http://localhost:8080/#games"
+                }
+                TrayMenu("Add Game") {
+                    windowState.isVisible = true
+                    url = "http://localhost:8080/#add"
+                }
+                TrayMenu("Exit") {
+                    exitApplication()
+                }
+            }
+        )
+        Window(
+            state = windowState,
+            onCloseRequest = { windowState.isVisible = false },
+            title = "Gaming Tracker"
+        ) {
+            val state = rememberWebViewState(url = url)
             WebView(
                 state = state,
                 modifier = Modifier.fillMaxSize()

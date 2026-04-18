@@ -4,6 +4,8 @@ import com.gamingtracker.application.ports.input.AddGameUseCase
 import com.gamingtracker.application.ports.input.GetGamesUseCase
 import com.gamingtracker.application.ports.input.GetSummaryUseCase
 import com.gamingtracker.application.ports.input.GetUpdateStatusUseCase
+import com.gamingtracker.application.usecases.ToggleAutostart
+import com.gamingtracker.application.usecases.GetAutostartStatus
 import com.gamingtracker.application.ports.input.MigrateLegacyDataUseCase
 import com.gamingtracker.infrastructure.api.ktor.dtos.*
 import io.ktor.http.*
@@ -18,7 +20,9 @@ fun Application.configureRouting(
     getSummaryUseCase: GetSummaryUseCase,
     migrateLegacyDataUseCase: MigrateLegacyDataUseCase,
     addGameUseCase: AddGameUseCase,
-    getUpdateStatusUseCase: GetUpdateStatusUseCase
+    getUpdateStatusUseCase: GetUpdateStatusUseCase,
+    toggleAutostartUseCase: ToggleAutostart,
+    getAutostartStatusUseCase: GetAutostartStatus
 ) {
     routing {
         // Serve static files from resources
@@ -81,6 +85,20 @@ fun Application.configureRouting(
                     downloadUrl = status.downloadUrl
                 ))
             }
+            get("/autostart") {
+                val enabled = getAutostartStatusUseCase()
+                call.respond(mapOf("enabled" to enabled))
+            }
+            post("/autostart") {
+                val body = call.receive<Map<String, Boolean>>()
+                if ("enabled" !in body) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "enabled is required"))
+                    return@post
+                }
+                val enabled = body["enabled"]!!
+                toggleAutostartUseCase(enabled)
+                call.respond(mapOf("enabled" to enabled))
+            }
         }
     }
-}
+} 

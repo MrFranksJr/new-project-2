@@ -4,6 +4,8 @@ import com.gamingtracker.application.ports.input.AddGameUseCase
 import com.gamingtracker.application.ports.input.GetGamesUseCase
 import com.gamingtracker.application.ports.input.GetSummaryUseCase
 import com.gamingtracker.application.ports.input.GetUpdateStatusUseCase
+import com.gamingtracker.application.usecases.ToggleAutostart
+import com.gamingtracker.application.usecases.GetAutostartStatus
 import com.gamingtracker.application.ports.input.MigrateLegacyDataUseCase
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -19,6 +21,8 @@ fun startKtorServer(
     migrateLegacyDataUseCase: MigrateLegacyDataUseCase,
     addGameUseCase: AddGameUseCase,
     getUpdateStatusUseCase: GetUpdateStatusUseCase,
+    toggleAutostartUseCase: ToggleAutostart,
+    getAutostartStatusUseCase: GetAutostartStatus,
     port: Int = 8080,
     wait: Boolean = false
 ) {
@@ -30,6 +34,6 @@ fun startKtorServer(
             anyHost()
             allowHeader(HttpHeaders.ContentType)
         }
-        configureRouting(getGamesUseCase, getSummaryUseCase, migrateLegacyDataUseCase, addGameUseCase, getUpdateStatusUseCase)
+        configureRouting(getGamesUseCase, getSummaryUseCase, migrateLegacyDataUseCase, addGameUseCase, getUpdateStatusUseCase, toggleAutostartUseCase, getAutostartStatusUseCase)
     }.start(wait = wait)
 }
