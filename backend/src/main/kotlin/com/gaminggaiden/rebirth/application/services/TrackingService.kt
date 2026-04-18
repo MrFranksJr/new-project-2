@@ -37,4 +37,11 @@ class TrackingService(
             }
         }
     }
+
+    fun isTracking(): Boolean = timer != null
+
+    fun stopTracking() {
+        timer?.cancel()
+        timer = null
+    }
 }

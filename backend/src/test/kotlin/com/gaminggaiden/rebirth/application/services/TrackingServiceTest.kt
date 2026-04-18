@@ -7,7 +7,7 @@ import com.gaminggaiden.rebirth.domain.Game
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlin.test.Test
+import kotlin.test.*
 
 class TrackingServiceTest {
     private val gameRepository = mockk<GameRepository>()
@@ -41,5 +41,34 @@ class TrackingServiceTest {
 
         // When & Then
         trackingService.trackOnce() // Should not throw
+    }
+
+    @Test
+    fun `startTracking starts the timer`() {
+        assertFalse(trackingService.isTracking())
+        trackingService.startTracking()
+        assertTrue(trackingService.isTracking())
+    }
+
+    @Test
+    fun `startTracking is idempotent`() {
+        trackingService.startTracking(1)
+        trackingService.startTracking(2)
+        assertTrue(trackingService.isTracking())
+    }
+
+    @Test
+    fun `stopTracking stops the timer`() {
+        trackingService.startTracking()
+        assertTrue(trackingService.isTracking())
+        trackingService.stopTracking()
+        assertFalse(trackingService.isTracking())
+    }
+
+    @Test
+    fun `stopTracking when not tracking does nothing`() {
+        assertFalse(trackingService.isTracking())
+        trackingService.stopTracking()
+        assertFalse(trackingService.isTracking())
     }
 }
