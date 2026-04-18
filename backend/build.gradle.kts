@@ -9,7 +9,7 @@ plugins {
 group = "com.gamingtracker"
 version = "1.0-SNAPSHOT"
 
-val ktorVersion = "3.0.0"
+val ktorVersion = "3.4.2"
 
 dependencies {
     // Compose for Desktop
@@ -23,7 +23,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
-    implementation("org.xerial:sqlite-jdbc:3.45.3.0")
+    implementation("org.xerial:sqlite-jdbc:3.50.3.0")
 
     // Ktor for Local API
     implementation("io.ktor:ktor-server-core:$ktorVersion")
@@ -33,19 +33,19 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     // JNA for Process Detection
-    implementation("net.java.dev.jna:jna:5.14.0")
-    implementation("net.java.dev.jna:jna-platform:5.14.0")
+    implementation("net.java.dev.jna:jna:5.17.0")
+    implementation("net.java.dev.jna:jna-platform:5.17.0")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.5.6")
+    implementation("ch.qos.logback:logback-classic:1.5.20")
 
     // WebView for Compose
     implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
 
     // Testing
     testImplementation(kotlin("test"))
-    testImplementation("io.mockk:mockk:1.13.11")
-    testImplementation("org.assertj:assertj-core:3.26.0")
+    testImplementation("io.mockk:mockk:1.14.6")
+    testImplementation("org.assertj:assertj-core:3.27.6")
     testImplementation("com.h2database:h2:2.2.224")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")

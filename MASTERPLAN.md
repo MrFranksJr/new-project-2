@@ -54,3 +54,5 @@
 
 ## Phase 9: Maintenance
 - [x] 9.1. Upgrade Kotlin Gradle plugins from 2.0.0 to 2.3.20
+- [x] 9.2. Remediate frontend dependency vulnerabilities (Vite advisory range) and verify with `npm audit` + `./gradlew test`
+- [x] 9.3. Remediate backend dependency vulnerabilities via safe version upgrades (Ktor/JNA/Logback/test libs) and verify with `./gradlew test`
