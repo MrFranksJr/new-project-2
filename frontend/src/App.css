@@ -1,0 +1,131 @@
+.app-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+header {
+  margin-bottom: 40px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 20px;
+}
+
+header h1 {
+  margin: 0;
+  color: var(--accent);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.summary-card {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+}
+
+.summary-item.active {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.icon {
+  color: var(--accent);
+}
+
+.game-list h2 {
+  margin-bottom: 20px;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.game-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.game-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.game-item h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--text-h);
+}
+
+.exe-name {
+  font-size: 12px;
+  color: var(--text);
+  font-family: var(--mono);
+  margin-top: 4px;
+}
+
+.game-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.game-status {
+  align-self: flex-start;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: var(--code-bg);
+}
+
+.status-playing {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.loading, .empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--text);
+  background: var(--code-bg);
+  border-radius: 8px;
+}
+
+footer {
+  margin-top: 60px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
