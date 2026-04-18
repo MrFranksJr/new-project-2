@@ -3,6 +3,7 @@ package com.gaminggaiden.rebirth.infrastructure.api.ktor
 import com.gaminggaiden.rebirth.application.ports.input.GamingSummary
 import com.gaminggaiden.rebirth.application.ports.input.GetGamesUseCase
 import com.gaminggaiden.rebirth.application.ports.input.GetSummaryUseCase
+import com.gaminggaiden.rebirth.application.ports.input.MigrateLegacyDataUseCase
 import com.gaminggaiden.rebirth.domain.Game
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -19,6 +20,7 @@ import kotlin.test.assertEquals
 class ApiTest {
     private val getGamesUseCase = mockk<GetGamesUseCase>()
     private val getSummaryUseCase = mockk<GetSummaryUseCase>()
+    private val migrateLegacyDataUseCase = mockk<MigrateLegacyDataUseCase>()
 
     @Test
     fun `should return games list`() = testApplication {
@@ -26,7 +28,7 @@ class ApiTest {
             install(ContentNegotiation) {
                 json()
             }
-            configureRouting(getGamesUseCase, getSummaryUseCase)
+            configureRouting(getGamesUseCase, getSummaryUseCase, migrateLegacyDataUseCase)
         }
         
         val games = listOf(Game("Hades", "Hades.exe"))
@@ -45,7 +47,7 @@ class ApiTest {
             install(ContentNegotiation) {
                 json()
             }
-            configureRouting(getGamesUseCase, getSummaryUseCase)
+            configureRouting(getGamesUseCase, getSummaryUseCase, migrateLegacyDataUseCase)
         }
         
         val summary = GamingSummary(totalPlaytimeMinutes = 100, activeGameName = null, gamingPCName = "MyRig")

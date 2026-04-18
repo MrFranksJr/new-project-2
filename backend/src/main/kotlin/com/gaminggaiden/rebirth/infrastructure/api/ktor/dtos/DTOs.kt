@@ -19,5 +19,6 @@ data class GamesResponse(val games: List<GameDTO>)
 data class SummaryDTO(
     val totalPlaytimeMinutes: Long,
     val activeGameName: String?,
-    val gamingPCName: String?
+    val gamingPCName: String?,
+    val systemStats: Map<String, String>
 )

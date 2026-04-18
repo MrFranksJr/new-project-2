@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Game } from '../types';
 import GameItem from './GameItem';
 
@@ -7,7 +6,7 @@ interface GameListProps {
   isLoading: boolean;
 }
 
-const GameList: React.FC<GameListProps> = ({ games, isLoading }) => {
+const GameList = ({ games, isLoading }: GameListProps) => {
   if (isLoading) {
     return <div className="game-list loading">Loading games...</div>;
   }

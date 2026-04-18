@@ -43,7 +43,7 @@ class SqliteGameRepository : GameRepository {
         }
 
         // Sync PCs
-        GameGamingPCsTable.deleteWhere { gameName eq game.name }
+        GameGamingPCsTable.deleteWhere { GameGamingPCsTable.gameName eq game.name }
         game.gamingPcs.forEach { pc ->
             // Ensure PC exists
             if (!GamingPCsTable.select { GamingPCsTable.name eq pc.name }.any()) {

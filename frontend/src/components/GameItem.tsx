@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Game } from '../types';
 import { Clock, Calendar } from 'lucide-react';
 
@@ -6,7 +5,7 @@ interface GameItemProps {
   game: Game;
 }
 
-const GameItem: React.FC<GameItemProps> = ({ game }) => {
+const GameItem = ({ game }: GameItemProps) => {
   return (
     <div className={`game-item status-${game.status.toLowerCase()}`}>
       <div className="game-info">

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Monitor, Clock, Play } from 'lucide-react';
 import type { Summary } from '../types';
 
@@ -7,7 +6,7 @@ interface SummaryCardProps {
   isLoading: boolean;
 }
 
-const SummaryCard: React.FC<SummaryCardProps> = ({ summary, isLoading }) => {
+const SummaryCard = ({ summary, isLoading }: SummaryCardProps) => {
   if (isLoading) {
     return <div className="summary-card loading">Loading summary...</div>;
   }

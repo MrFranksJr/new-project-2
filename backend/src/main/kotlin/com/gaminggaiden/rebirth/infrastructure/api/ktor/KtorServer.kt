@@ -2,6 +2,7 @@ package com.gaminggaiden.rebirth.infrastructure.api.ktor
 
 import com.gaminggaiden.rebirth.application.ports.input.GetGamesUseCase
 import com.gaminggaiden.rebirth.application.ports.input.GetSummaryUseCase
+import com.gaminggaiden.rebirth.application.ports.input.MigrateLegacyDataUseCase
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -13,6 +14,7 @@ import io.ktor.http.*
 fun startKtorServer(
     getGamesUseCase: GetGamesUseCase,
     getSummaryUseCase: GetSummaryUseCase,
+    migrateLegacyDataUseCase: MigrateLegacyDataUseCase,
     port: Int = 8080,
     wait: Boolean = false
 ) {
@@ -24,6 +26,6 @@ fun startKtorServer(
             anyHost()
             allowHeader(HttpHeaders.ContentType)
         }
-        configureRouting(getGamesUseCase, getSummaryUseCase)
+        configureRouting(getGamesUseCase, getSummaryUseCase, migrateLegacyDataUseCase)
     }.start(wait = wait)
 }

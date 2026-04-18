@@ -12,7 +12,7 @@
     - [x] 2.2.1. Create Exposed Schema (Tables)
     - [x] 2.2.2. Implement Repository Adapters (Game, Session, GamingPC)
     - [x] 2.2.3. Write Integration Tests for Repositories
-- [ ] 2.3. Implement Legacy Migration Service (Import from legacy GamingGaiden.db)
+- [x] 2.3. Implement Legacy Migration Service (Import from legacy GamingGaiden.db)
 - [x] 2.4. Implement Windows System Integration (JNA for process monitoring)
 - [x] 2.5. Integrate HWiNFO64 Registry Updates
 - [x] 2.6. Create Backend Entry Point (Main.kt) and App Wiring
