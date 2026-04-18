@@ -45,7 +45,7 @@ function App() {
       </main>
       
       <footer>
-        <p>Gaming Gaiden Rebirth &copy; 2026 | Current Version: {updateStatus?.currentVersion || '1.0.0'}</p>
+        <p>Gaming Tracker &copy; 2026 | Current Version: {updateStatus?.currentVersion || '1.0.0'}</p>
       </footer>
     </div>
   );

@@ -1,6 +1,6 @@
-# Gaming Gaiden Rebirth
+# Gaming Tracker
 
-**Gaming Gaiden Rebirth** is a modern, cross-language gaming session tracker designed specifically for Windows users. Evolved from its legacy Delphi/C# roots, this project leverages a clean, hexagonal architecture and modern technologies to provide an unobtrusive and feature-rich gaming dashboard.
+**Gaming Tracker** is a modern, cross-language gaming session tracker designed specifically for Windows users. Evolved from its legacy Delphi/C# roots, this project leverages a clean, hexagonal architecture and modern technologies to provide an unobtrusive and feature-rich gaming dashboard.
 
 ---
 

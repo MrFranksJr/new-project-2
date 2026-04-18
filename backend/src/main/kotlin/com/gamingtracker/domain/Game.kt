@@ -1,0 +1,24 @@
+package com.gamingtracker.domain
+
+import com.gamingtracker.domain.GameStatus.PLAYING
+import com.gamingtracker.domain.GameStatus.UNPLAYED
+import java.time.Instant
+
+data class Game(
+    val name: String,
+    val exeName: String,
+    val playtimeMinutes: Long = 0,
+    val sessionCount: Int = 0,
+    val lastPlayDate: Instant? = null,
+    val status: GameStatus = UNPLAYED,
+    val gamingPcs: List<GamingPC> = emptyList()
+) {
+    fun trackSession(durationMinutes: Long, startTime: Instant): Game {
+        return this.copy(
+            playtimeMinutes = this.playtimeMinutes + durationMinutes,
+            sessionCount = this.sessionCount + 1,
+            lastPlayDate = startTime,
+            status = if (this.status == UNPLAYED) PLAYING else this.status
+        )
+    }
+}

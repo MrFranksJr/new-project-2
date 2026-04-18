@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.8.3"
 }
 
-group = "com.gaminggaiden"
+group = "com.gamingtracker"
 version = "1.0-SNAPSHOT"
 
 val ktorVersion = "3.0.0"
@@ -84,15 +84,15 @@ tasks.processResources {
 
 compose.desktop {
     application {
-        mainClass = "com.gaminggaiden.rebirth.MainKt"
+        mainClass = "com.gamingtracker.MainKt"
 
         nativeDistributions {
             targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Exe)
-            packageName = "GamingGaidenRebirth"
+            packageName = "GamingTracker"
             packageVersion = "1.0.0"
-            description = "Gaming Gaiden Rebirth - Modernized Gaming Session Tracker"
-            copyright = "© 2026 Gaming Gaiden"
-            vendor = "Gaming Gaiden"
+            description = "Gaming Tracker - Modernized Gaming Session Tracker"
+            copyright = "© 2026 Gaming Tracker"
+            vendor = "Gaming Tracker"
             
             windows {
                 menuGroup = "Games"
