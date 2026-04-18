@@ -9,7 +9,7 @@ class CheckForUpdates(
     private val currentVersion: String
 ) : GetUpdateStatusUseCase {
     
-    override fun execute(): UpdateStatus {
+    override fun getUpdateStatus(): UpdateStatus {
         val latest = versionProvider.getLatestVersion()
         val hasUpdate = isNewer(latest, currentVersion)
         

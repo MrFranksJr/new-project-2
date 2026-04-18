@@ -70,4 +70,25 @@ class SqliteLegacyDatabaseAdapterTest {
         assertEquals("Skyrim", sessions[0].gameName)
         assertEquals(120, sessions[0].durationMinutes)
     }
+
+    @Test
+    fun `should handle invalid game status in legacy database`() {
+        // Given
+        val db = Database.connect("jdbc:h2:mem:legacy;DB_CLOSE_DELAY=-1;", driver = "org.h2.Driver")
+        transaction(db) {
+            SqliteLegacyDatabaseAdapter.LegacyGamesTable.insert {
+                it[name] = "BrokenGame"
+                it[exeName] = "broken.exe"
+                it[status] = "INVALID_STATUS"
+            }
+        }
+        val adapter = SqliteLegacyDatabaseAdapter(db)
+
+        // When
+        val games = adapter.fetchAllGames()
+
+        // Then
+        val brokenGame = games.find { it.name == "BrokenGame" }
+        assertEquals(GameStatus.UNPLAYED, brokenGame?.status)
+    }
 }

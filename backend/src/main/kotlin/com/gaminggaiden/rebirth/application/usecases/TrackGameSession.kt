@@ -13,7 +13,7 @@ class TrackGameSession(
     private val gamingPCRepository: GamingPCRepository
 ) : TrackGameSessionUseCase {
 
-    override fun execute(gameExeName: String, startTime: Instant, durationMinutes: Long) {
+    override fun trackSession(gameExeName: String, startTime: Instant, durationMinutes: Long) {
         val game = gameRepository.findByExeName(gameExeName) ?: return
 
         val currentPc = gamingPCRepository.findInUse()

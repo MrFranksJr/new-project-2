@@ -5,7 +5,6 @@ import com.gaminggaiden.rebirth.application.ports.output.GamingPCRepository
 import com.gaminggaiden.rebirth.application.ports.output.SessionRepository
 import com.gaminggaiden.rebirth.domain.Game
 import com.gaminggaiden.rebirth.domain.GamingPC
-import com.gaminggaiden.rebirth.domain.GamingSession
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -29,7 +28,7 @@ class TrackGameSessionTest {
         every { gameRepository.findByExeName("eldenring.exe") } returns game
 
         // When
-        useCase.execute("eldenring.exe", startTime, duration)
+        useCase.trackSession("eldenring.exe", startTime, duration)
 
         // Then
         verify {
@@ -54,7 +53,7 @@ class TrackGameSessionTest {
         every { gamingPCRepository.findInUse() } returns pc
 
         // When
-        useCase.execute("eldenring.exe", startTime, duration)
+        useCase.trackSession("eldenring.exe", startTime, duration)
 
         // Then
         verify {

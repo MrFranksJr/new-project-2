@@ -8,5 +8,5 @@ data class GamingSummary(
 )
 
 interface GetSummaryUseCase {
-    fun execute(): GamingSummary
+    fun getSummary(): GamingSummary
 }

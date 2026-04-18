@@ -33,3 +33,11 @@
 - [x] 5.1. 100% Coverage for Core Tracking Logic (Unit Tests)
 - [x] 5.2. Integration Tests for Persistence and Migrations
 - [x] 5.3. E2E Validation of Full User Journey
+
+## Phase 6: Refactoring & Test Completion ✓
+- [x] 6.1. Rename 'execute' methods to domain-specific verbs in use cases
+- [x] 6.2. Add Kover for backend coverage analysis
+- [x] 6.3. Set up Vitest and React Testing Library for frontend
+- [x] 6.4. Implement frontend unit and component tests
+- [x] 6.5. Improve backend coverage for repositories and legacy adapters
+- [x] 6.6. Remove unused repository and service methods (Cleanup)

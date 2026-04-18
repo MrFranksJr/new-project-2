@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.serialization")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("org.jetbrains.kotlinx.kover") version "0.8.3"
 }
 
 group = "com.gaminggaiden"

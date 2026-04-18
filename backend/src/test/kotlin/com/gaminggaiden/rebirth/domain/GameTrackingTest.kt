@@ -18,5 +18,19 @@ class GameTrackingTest {
         // Then
         assertEquals(120L, updatedGame.playtimeMinutes)
         assertEquals(1, updatedGame.sessionCount)
+        assertEquals(GameStatus.PLAYING, updatedGame.status)
+    }
+
+    @Test
+    fun `given a finished game when tracked then its status remains finished`() {
+        // Given
+        val game = Game(name = "Hades", exeName = "Hades.exe", status = GameStatus.FINISHED)
+        
+        // When
+        val updatedGame = game.trackSession(30, Instant.now())
+        
+        // Then
+        assertEquals(GameStatus.FINISHED, updatedGame.status)
+        assertEquals(30, updatedGame.playtimeMinutes)
     }
 }

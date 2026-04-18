@@ -18,7 +18,7 @@ class AddGameTest {
         val exe = "Starfield.exe"
         every { repository.findByName(name) } returns null
         
-        val result = useCase.execute(name, exe)
+        val result = useCase.addGame(name, exe)
         
         assertEquals(name, result.name)
         assertEquals(exe, result.exeName)
@@ -32,7 +32,7 @@ class AddGameTest {
         val existingGame = Game(name, exe)
         every { repository.findByName(name) } returns existingGame
         
-        val result = useCase.execute(name, "something_else.exe")
+        val result = useCase.addGame(name, "something_else.exe")
         
         assertEquals(existingGame, result)
         verify(exactly = 0) { repository.save(any()) }

@@ -16,7 +16,7 @@ class GetGamesTest {
         val games = listOf(Game("Hades", "Hades.exe"), Game("Celeste", "Celeste.exe"))
         every { gameRepository.getAllGames() } returns games
 
-        val result = useCase.execute()
+        val result = useCase.getGames()
 
         assertEquals(games, result)
     }

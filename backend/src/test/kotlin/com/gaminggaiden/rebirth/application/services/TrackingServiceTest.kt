@@ -29,7 +29,17 @@ class TrackingServiceTest {
         trackingService.trackOnce()
 
         // Then
-        verify(exactly = 1) { trackGameSessionUseCase.execute("Hades.exe", any(), 1L) }
-        verify(exactly = 0) { trackGameSessionUseCase.execute("eldenring.exe", any(), any()) }
+        verify(exactly = 1) { trackGameSessionUseCase.trackSession("Hades.exe", any(), 1L) }
+        verify(exactly = 0) { trackGameSessionUseCase.trackSession("eldenring.exe", any(), any()) }
+    }
+
+    @Test
+    fun `should handle process monitor exceptions gracefully`() {
+        // Given
+        every { gameRepository.getAllGames() } returns emptyList()
+        every { processMonitor.getRunningExecutables() } throws RuntimeException("System error")
+
+        // When & Then
+        trackingService.trackOnce() // Should not throw
     }
 }

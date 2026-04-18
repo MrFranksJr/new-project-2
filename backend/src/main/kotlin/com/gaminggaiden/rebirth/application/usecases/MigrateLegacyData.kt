@@ -11,7 +11,7 @@ class MigrateLegacyData(
     private val legacyDatabasePort: LegacyDatabasePort
 ) : MigrateLegacyDataUseCase {
 
-    override fun execute(legacyDbPath: String) {
+    override fun migrate(legacyDbPath: String) {
         val games = legacyDatabasePort.fetchAllGames()
         games.forEach { gameRepository.save(it) }
 

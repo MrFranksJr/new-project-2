@@ -5,7 +5,7 @@ import com.gaminggaiden.rebirth.application.ports.output.GameRepository
 import com.gaminggaiden.rebirth.domain.Game
 
 class AddGame(private val gameRepository: GameRepository) : AddGameUseCase {
-    override fun execute(name: String, exeName: String): Game {
+    override fun addGame(name: String, exeName: String): Game {
         val existing = gameRepository.findByName(name)
         if (existing != null) return existing
         

@@ -34,7 +34,7 @@ class MigrateLegacyDataTest {
         every { legacyDatabasePort.fetchAllSessions() } returns legacySessions
 
         // When
-        migrateLegacyData.execute("path/to/legacy.db")
+        migrateLegacyData.migrate("path/to/legacy.db")
 
         // Then
         verify(exactly = 2) { gameRepository.save(any()) }

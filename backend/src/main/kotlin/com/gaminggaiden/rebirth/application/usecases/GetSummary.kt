@@ -12,7 +12,7 @@ class GetSummary(
     private val pcRepository: GamingPCRepository,
     private val statsProvider: SystemStatsProvider? = null
 ) : GetSummaryUseCase {
-    override fun execute(): GamingSummary {
+    override fun getSummary(): GamingSummary {
         val games = gameRepository.getAllGames()
         val totalPlaytime = games.sumOf { it.playtimeMinutes }
         val currentPc = pcRepository.findInUse()

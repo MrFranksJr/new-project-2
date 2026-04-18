@@ -22,11 +22,6 @@ class TrackingService(
         }
     }
 
-    fun stopTracking() {
-        timer?.cancel()
-        timer = null
-    }
-
     fun trackOnce() {
         val runningExecutables = try {
             processMonitor.getRunningExecutables()
@@ -38,7 +33,7 @@ class TrackingService(
         
         allGames.forEach { game ->
             if (runningExecutables.contains(game.exeName)) {
-                trackGameSessionUseCase.execute(game.exeName, Instant.now(), 1L)
+                trackGameSessionUseCase.trackSession(game.exeName, Instant.now(), 1L)
             }
         }
     }

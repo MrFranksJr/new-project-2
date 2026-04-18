@@ -4,14 +4,14 @@ import com.gaminggaiden.rebirth.domain.Game
 import com.gaminggaiden.rebirth.domain.GameStatus
 import com.gaminggaiden.rebirth.domain.GamingPC
 import com.gaminggaiden.rebirth.domain.GamingSession
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 
 class SqliteRepositoryIntegrationTest {
@@ -20,6 +20,7 @@ class SqliteRepositoryIntegrationTest {
     fun setup() {
         Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;", driver = "org.h2.Driver")
         transaction {
+            SchemaUtils.drop(GamesTable, GamingSessionsTable, GamingPCsTable, GameGamingPCsTable)
             SchemaUtils.create(GamesTable, GamingSessionsTable, GamingPCsTable, GameGamingPCsTable)
         }
     }
@@ -47,6 +48,20 @@ class SqliteRepositoryIntegrationTest {
         assertEquals(game.status, retrieved.status)
         assertEquals(1, retrieved.gamingPcs.size)
         assertEquals("MyRig", retrieved.gamingPcs[0].name)
+
+        val retrievedByExe = repo.findByExeName("Cyberpunk2077.exe")
+        assertNotNull(retrievedByExe)
+        assertEquals("Cyberpunk 2077", retrievedByExe.name)
+    }
+
+    @Test
+    fun `should list all games`() {
+        val repo = SqliteGameRepository()
+        repo.save(Game("Game 1", "game1.exe"))
+        repo.save(Game("Game 2", "game2.exe"))
+
+        val all = repo.getAllGames()
+        assertEquals(2, all.size)
     }
 
     @Test
@@ -67,16 +82,37 @@ class SqliteRepositoryIntegrationTest {
     }
 
     @Test
-    fun `should track gaming PCs correctly`() {
+    fun `should update existing game`() {
+        val repo = SqliteGameRepository()
+        val game = Game("UpdateMe", "original.exe")
+        repo.save(game)
+
+        val updated = game.copy(exeName = "updated.exe", playtimeMinutes = 60)
+        repo.save(updated)
+
+        val retrieved = repo.findByName("UpdateMe")
+        assertNotNull(retrieved)
+        assertEquals("updated.exe", retrieved.exeName)
+        assertEquals(60, retrieved.playtimeMinutes)
+    }
+
+    @Test
+    fun `should track gaming PCs correctly and enforce single in-use`() {
         val pcRepo = SqliteGamingPCRepository()
-        val pc = GamingPC("SteamDeck", totalPlaytimeMinutes = 500, inUse = false)
+        val pc1 = GamingPC("SteamDeck", totalPlaytimeMinutes = 500, inUse = true)
+        pcRepo.save(pc1)
         
-        pcRepo.save(pc)
-        pcRepo.save(pc.copy(inUse = true, totalPlaytimeMinutes = 510))
+        val pc2 = GamingPC("MainRig", totalPlaytimeMinutes = 1000, inUse = true)
+        pcRepo.save(pc2)
         
         val inUse = pcRepo.findInUse()
         assertNotNull(inUse)
-        assertEquals("SteamDeck", inUse.name)
-        assertEquals(510, inUse.totalPlaytimeMinutes)
+        assertEquals("MainRig", inUse.name)
+        
+        // Verify pc1 is no longer in use
+        transaction {
+            val pc1InDb = GamingPCsTable.select { GamingPCsTable.name eq "SteamDeck" }.single()
+            assertFalse(pc1InDb[GamingPCsTable.inUse])
+        }
     }
 }

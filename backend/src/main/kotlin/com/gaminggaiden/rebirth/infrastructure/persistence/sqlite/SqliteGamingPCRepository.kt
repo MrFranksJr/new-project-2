@@ -6,12 +6,6 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class SqliteGamingPCRepository : GamingPCRepository {
-    override fun findByName(name: String): GamingPC? = transaction {
-        GamingPCsTable.select { GamingPCsTable.name eq name }
-            .map { toDomain(it) }
-            .singleOrNull()
-    }
-
     override fun findInUse(): GamingPC? = transaction {
         GamingPCsTable.select { GamingPCsTable.inUse eq true }
             .map { toDomain(it) }
@@ -40,10 +34,6 @@ class SqliteGamingPCRepository : GamingPCRepository {
             }
         }
         Unit
-    }
-
-    override fun getAll(): List<GamingPC> = transaction {
-        GamingPCsTable.selectAll().map { toDomain(it) }
     }
 
     private fun toDomain(row: ResultRow): GamingPC {

@@ -12,7 +12,6 @@ import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.io.File
 
 fun Application.configureRouting(
     getGamesUseCase: GetGamesUseCase,
@@ -29,7 +28,7 @@ fun Application.configureRouting(
 
         route("/api") {
             get("/games") {
-                val games = getGamesUseCase.execute()
+                val games = getGamesUseCase.getGames()
                 val dtos = games.map {
                     GameDTO(
                         name = it.name,
@@ -45,7 +44,7 @@ fun Application.configureRouting(
 
             post("/games") {
                 val request = call.receive<AddGameRequest>()
-                val game = addGameUseCase.execute(request.name, request.exeName)
+                val game = addGameUseCase.addGame(request.name, request.exeName)
                 call.respond(HttpStatusCode.Created, GameDTO(
                     name = game.name,
                     exeName = game.exeName,
@@ -57,7 +56,7 @@ fun Application.configureRouting(
             }
             
             get("/summary") {
-                val summary = getSummaryUseCase.execute()
+                val summary = getSummaryUseCase.getSummary()
                 val dto = SummaryDTO(
                     totalPlaytimeMinutes = summary.totalPlaytimeMinutes,
                     activeGameName = summary.activeGameName,
@@ -69,12 +68,12 @@ fun Application.configureRouting(
 
             post("/migrate") {
                 // Assuming legacy database is in the same directory for simplicity
-                migrateLegacyDataUseCase.execute("GamingGaiden.db")
+                migrateLegacyDataUseCase.migrate("GamingGaiden.db")
                 call.respond(HttpStatusCode.OK, mapOf("status" to "success"))
             }
 
             get("/update-check") {
-                val status = getUpdateStatusUseCase.execute()
+                val status = getUpdateStatusUseCase.getUpdateStatus()
                 call.respond(UpdateStatusDTO(
                     hasUpdate = status.hasUpdate,
                     latestVersion = status.latestVersion,

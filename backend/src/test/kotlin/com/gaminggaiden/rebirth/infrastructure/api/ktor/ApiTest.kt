@@ -37,7 +37,7 @@ class ApiTest {
         }
         
         val games = listOf(Game("Hades", "Hades.exe"))
-        every { getGamesUseCase.execute() } returns games
+        every { getGamesUseCase.getGames() } returns games
         
         val response = client.get("/api/games")
         
@@ -56,7 +56,7 @@ class ApiTest {
         }
         
         val summary = GamingSummary(totalPlaytimeMinutes = 100, activeGameName = null, gamingPCName = "MyRig")
-        every { getSummaryUseCase.execute() } returns summary
+        every { getSummaryUseCase.getSummary() } returns summary
         
         val response = client.get("/api/summary")
         
@@ -75,7 +75,7 @@ class ApiTest {
         }
 
         val game = Game("Starfield", "Starfield.exe")
-        every { addGameUseCase.execute("Starfield", "Starfield.exe") } returns game
+        every { addGameUseCase.addGame("Starfield", "Starfield.exe") } returns game
 
         val response = client.post("/api/games") {
             contentType(ContentType.Application.Json)
@@ -96,7 +96,7 @@ class ApiTest {
         }
 
         val updateStatus = UpdateStatus(hasUpdate = true, latestVersion = "1.1.0", currentVersion = "1.0.0", downloadUrl = "http://dl.com")
-        every { getUpdateStatusUseCase.execute() } returns updateStatus
+        every { getUpdateStatusUseCase.getUpdateStatus() } returns updateStatus
 
         val response = client.get("/api/update-check")
 

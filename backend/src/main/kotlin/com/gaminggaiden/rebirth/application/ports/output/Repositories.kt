@@ -16,8 +16,6 @@ interface SessionRepository {
 }
 
 interface GamingPCRepository {
-    fun findByName(name: String): GamingPC?
     fun findInUse(): GamingPC?
     fun save(pc: GamingPC)
-    fun getAll(): List<GamingPC>
 }

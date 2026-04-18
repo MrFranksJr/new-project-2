@@ -17,7 +17,7 @@ class CheckForUpdatesTest {
         every { versionProvider.getLatestVersion() } returns "1.0.1"
         every { versionProvider.getDownloadUrl() } returns "http://example.com/download"
 
-        val status = useCase.execute()
+        val status = useCase.getUpdateStatus()
 
         assertTrue(status.hasUpdate)
         assertEquals("1.0.1", status.latestVersion)
@@ -29,7 +29,7 @@ class CheckForUpdatesTest {
         val useCase = CheckForUpdates(versionProvider, "1.0.0")
         every { versionProvider.getLatestVersion() } returns "1.0.0"
 
-        val status = useCase.execute()
+        val status = useCase.getUpdateStatus()
 
         assertFalse(status.hasUpdate)
         assertEquals("1.0.0", status.latestVersion)
@@ -40,7 +40,7 @@ class CheckForUpdatesTest {
         val useCase = CheckForUpdates(versionProvider, "1.1.0")
         every { versionProvider.getLatestVersion() } returns "1.0.9"
 
-        val status = useCase.execute()
+        val status = useCase.getUpdateStatus()
 
         assertFalse(status.hasUpdate)
     }
@@ -51,7 +51,7 @@ class CheckForUpdatesTest {
         every { versionProvider.getLatestVersion() } returns "1.0.1"
         every { versionProvider.getDownloadUrl() } returns null
 
-        val status = useCase.execute()
+        val status = useCase.getUpdateStatus()
 
         assertTrue(status.hasUpdate)
     }
@@ -61,7 +61,7 @@ class CheckForUpdatesTest {
         val useCase = CheckForUpdates(versionProvider, "1.1")
         every { versionProvider.getLatestVersion() } returns "1.1.0"
 
-        val status = useCase.execute()
+        val status = useCase.getUpdateStatus()
 
         assertFalse(status.hasUpdate)
     }
